@@ -10,9 +10,26 @@ This behavior is a little surprising to me for a few reasons:
 
 ## Usage
 
-* `make` to generate the postrenderer binary in the build folder
-* `make test` shows the original manifest parsing without passing through a postrenderer
-* `HELM_PLUGINS="./example-plugins" helm template successful-chart --post-renderer postrenderer` shows the postrenderer running for a helm chart that is formated as YAML that is not JSON
-* `HELM_PLUGINS="./example-plugins" helm template erroring-chart --post-renderer postrenderer` shows the postrenderer failing on a helm chart that is formated as JSON (all JSON is valid YAML)
+Generate the postrenderer binary in the build folder:
+```bash
+make
+```
 
+Show the original manifest parsing without passing through a postrenderer:
+```bash
+make test
+```
+Run helm template with postrenderer on a helm chart with a resource that is formated as YAML that is not also JSON (this should succeed)
+```bash
+HELM_PLUGINS="./example-plugins" helm template successful-chart --post-renderer postrenderer
+```
+
+Run helm template with postrenderer on a helm chart with a resource that is formated as JSON (all JSON is valid YAML; this should fail)
+```bash
+HELM_PLUGINS="./example-plugins" helm template erroring-chart --post-renderer postrenderer
+```
+
+Note: this typically fails with `Error: error while running post render on files: post-renderer "postrenderer" produced empty output` because Helm 4 swallows stderr from the postrenderer and stdout is reserved for the manifest.
+
+Last tested with helm 4.3.0.
 
